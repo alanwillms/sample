@@ -30,7 +30,7 @@
 			<td><?php echo $person->address; ?></td>
 			<td><?php echo $person->email; ?></td>
 			<td><a href="<?php echo $this->createUrl('update', array('id' => $person->id)); ?>">Update</a></td>
-			<td></td>
+			<td><a href="<?php echo $this->createUrl('delete', array('id' => $person->id)); ?>">Delete</a></td>
 		</tr>
 		<?php endforeach; ?>
 	</tbody>

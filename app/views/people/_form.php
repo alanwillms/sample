@@ -7,6 +7,13 @@
 		</div>
 	</div>
 
+	<div class="control-group">
+		<label class="control-label" for="Person_last_name">Last name</label>
+		<div class="controls">
+			<input type="text" id="Person_last_name" name="Person[last_name]" value="<?php echo $person->last_name; ?>" />
+		</div>
+	</div>
+
 	<div class="form-actions">
 		<input type="submit" value="Save" class="btn btn-primary" />
 		<a href="<?php echo $this->createUrl('index'); ?>" class="btn">Cancel</a>

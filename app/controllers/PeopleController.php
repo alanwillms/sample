@@ -24,6 +24,7 @@ class PeopleController extends Controller
 	}
 
 	// TODO CHECK SAFE ATTRIBUTES
+	// TODO FLASH MESSAGES
 
 	/**
 	 * Create person
@@ -47,12 +48,11 @@ class PeopleController extends Controller
 	}
 
 	/**
-	 * Update person
+	 * Update a person
 	 */
 	public function actionUpdate()
 	{
-		// Model will filter user input.. don't worry!
-		$person = Person::findByPk($_GET['id']);
+		$person = $this->loadModel($_GET['id']);
 
 		if (isset($_POST['Person'])) {
 
@@ -65,5 +65,36 @@ class PeopleController extends Controller
 		}
 
 		$this->render('update', array('person' => $person));
+	}
+
+	/**
+	 * Delete a person
+	 */
+	public function actionDelete()
+	{
+		if (isset($_POST) && isset($_POST['id'])) {
+
+			$person = $this->loadModel($_POST['id']);
+			$person->delete();
+		}
+		
+		$this->redirect('index');
+	}
+
+	/**
+	 * Load person model
+	 * @param integer $id
+	 * @throws Exception
+	 */
+	public function loadModel($id)
+	{
+		// AR will take care of input data...
+		$model = $person = Person::findByPk($id);
+
+		if (!$model) {
+			throw new Exception('Record not found', 404);
+		}
+
+		return $model;
 	}
 }

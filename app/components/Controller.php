@@ -53,6 +53,17 @@ abstract class Controller
 	}
 
 	/**
+	 * Redirects request
+	 * @param string $request controller/action or action
+	 * @param array $params
+	 */
+	protected function redirect($request, array $params = array())
+	{
+		header('Location: ' . $this->createUrl($request, $params));
+		exit;
+	}
+
+	/**
 	 * Render view within application layout
 	 * @param string $viewFileName
 	 * @param array $viewParams Variables exported to view
