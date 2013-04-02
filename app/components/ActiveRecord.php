@@ -59,7 +59,7 @@ abstract class ActiveRecord
 		if ($this->hasAttribute($name)) {
 
 			$this->_attributes[$name] = $value;
-			
+
 			return $this;
 		}
 
@@ -150,7 +150,24 @@ abstract class ActiveRecord
 	}
 
 	/**
-	 * Find All objects
+	 * Get PK attribute name
+	 * @return string
+	 */
+	public static function getPrimaryKeyName()
+	{
+		$model = get_called_class();
+
+		foreach ($model::getDbTableInfo() as $column) {
+
+			if ($column['Key'] == 'PRI')
+				return $column['Field'];
+		}
+
+		throw new Exception('Unknown primary key column name');
+	}
+
+	/**
+	 * Find all objects
 	 * @param array $filtering Specifies query params (as WHERE, ORDER, etc.)
 	 * @return ActiveRecord[]
 	 */
@@ -162,6 +179,10 @@ abstract class ActiveRecord
 
 		if (isset($filtering['order'])) {
 			$order = $model::prepareOrder($filtering['order']);
+		}
+
+		if (isset($filtering['limit'])) {
+			$limit = $model::prepareLimit($filtering['limit']);
 		}
 
 		if (!isset($filtering['select'])) {
@@ -190,7 +211,39 @@ abstract class ActiveRecord
 	}
 
 	/**
+	 * Find one object
+	 * @param array $filtering Specifies query params (as WHERE, ORDER, etc.)
+	 * @return ActiveRecord
+	 */
+	public static function find(array $filtering = array())
+	{
+		$model = get_called_class();
+
+		$filtering['limit'] = 1;
+
+		$objects = $model::all($filtering);
+
+		if ($objects) {
+			return array_pop($objects);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Find one object by its primary key
+	 * @param integer $id
+	 * @return ActiveRecord
+	 */
+	public static function findByPk($id)
+	{
+		$model = get_called_class();
+		return $model::find(array($model::getPrimaryKeyName() => intval($id)));
+	}
+
+	/**
 	 * Prepare ORDER BY clause
+	 * @param array $attributes
 	 * @return string
 	 */
 	protected static function prepareOrder(array $attributes)
@@ -208,6 +261,22 @@ abstract class ActiveRecord
 
 		if ($orderBy) {
 			return ' ORDER BY ' . implode(', ', $orderBy);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Prepare LIMIT clause
+	 * @param integer $limit
+	 * @return string
+	 */
+	protected static function prepareLimit($limit)
+	{
+		$limit = intval($limit);
+
+		if ($limit) {
+			return ' LIMIT ' . $limit;
 		}
 
 		return null;
