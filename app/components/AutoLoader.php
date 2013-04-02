@@ -13,6 +13,14 @@ class AutoLoader
 	{
 		return realpath(__DIR__ . DIRECTORY_SEPARATOR . '..');
 	}
+	/**
+	 * Return views base path
+	 * @return string
+	 */
+	public static function getViewsPath()
+	{
+		return realpath(__DIR__ . DIRECTORY_SEPARATOR . '..') . DIRECTORY_SEPARATOR . 'views';
+	}
 
 	/**
 	 * Load class
