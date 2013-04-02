@@ -1,6 +1,6 @@
 <h1>People</h1>
 
-<p class="btn-group">
+<p>
 	<a href="<?php echo $this->createUrl('new'); ?>" class="btn btn-primary">New Person</a>
 </p>
 

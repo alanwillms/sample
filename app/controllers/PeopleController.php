@@ -76,9 +76,13 @@ class PeopleController extends Controller
 
 			$person = $this->loadModel($_POST['id']);
 			$person->delete();
+
+			$this->redirect('index');
 		}
 		
-		$this->redirect('index');
+		$person = $this->loadModel($_GET['id']);
+		
+		$this->render('delete', array('person' => $person));
 	}
 
 	/**

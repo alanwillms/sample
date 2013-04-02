@@ -201,6 +201,28 @@ abstract class ActiveRecord
 	}
 
 	/**
+	 * Remove related row from database table
+	 */
+	public function delete()
+	{
+		$pk = $this->getPrimaryKeyName();
+		$table = $this->getDbTableName();
+
+		if (!$this->$pk) {
+			throw new Exception('Unknown object primary key');
+		}
+
+		$query = 'DELETE FROM ' . $table . $this->prepareWhere(array($pk => $this->$pk));
+		$statement = $this->getDb()->prepare($query);
+
+		if (!$statement) {
+			throw new Exception('Query error');
+		}
+
+		return $statement->execute();
+	}
+
+	/**
 	 * Set PDO DB adapter
 	 * @param PDO $dbAdapter
 	 */
