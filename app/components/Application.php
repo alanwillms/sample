@@ -29,7 +29,7 @@ class Application
 			$this->setupDataBase($this->_config['dataBase']);
 		}
 
-		$urlConfig = (isset($this->_config['url'])) ? $this->_config['url'] : false;
+		$urlConfig = ($this->_config && isset($this->_config['url'])) ? $this->_config['url'] : false;
 
 		$this->setupUrlManager($urlConfig);
 	}
@@ -40,6 +40,15 @@ class Application
 	 */
 	public function setupDataBase($config)
 	{
+		$requiredInfo = array('engine', 'database', 'host', 'username', 'password');
+		$availableInfo = array_keys($config);
+
+		foreach ($requiredInfo as $info) {
+			if (!in_array($info, $availableInfo) || null === $config[$info]) {
+				throw new Exception('You must inform database ' . $info . ' in the config file');
+			}
+		}
+
 		$dns = $config['engine'] . ':dbname=' . $config['database'] . ";host=" . $config['host']; 
 		$pdo = new PDO($dns, $config['username'], $config['password']);
 
@@ -79,14 +88,14 @@ class Application
 
 		// If it can't find controller class
 		if (false == AutoLoader::load($controllerClass)) {
-			throw new Exception('Controller not found', 404);
+			throw new Exception('Controller class "' . $controllerClass . '" not found', 404);
 		}
 
 		$controller = new $controllerClass;
 
 		// If it can't find action method
 		if (false == method_exists($controller, $actionMethod)) {
-			throw new Exception('Action not found', 404);
+			throw new Exception('Action method "' . $actionMethod . '"  not found', 404);
 		}
 
 		$controller->$actionMethod();
@@ -103,6 +112,6 @@ class Application
 			throw new Exception('Config file not found: ' . $configFilePath);
 		}
 
-		include $configFilePath;
+		return include $configFilePath;
 	}
 }
