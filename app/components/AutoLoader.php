@@ -6,13 +6,22 @@
 class AutoLoader
 {
 	/**
+	 * Return application base path
+	 * @return string
+	 */
+	public static function getBasePath()
+	{
+		return realpath(__DIR__ . DIRECTORY_SEPARATOR . '..');
+	}
+
+	/**
 	 * Load class
 	 * @param string $className
 	 * @return boolean
 	 */
 	public static function load($className)
 	{
-		$basePath = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..');
+		$basePath = self::getBasePath();
 
 		$pathsByPriority = array(
 			'components',
