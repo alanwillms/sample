@@ -22,4 +22,25 @@ class PeopleController extends Controller
 
 		$this->render('index', array('people' => $people));
 	}
+
+	/**
+	 * Create person
+	 */
+	public function actionnew()
+	{
+		$person = new Person;
+
+		if (isset($_POST['Person'])) {
+
+			// Model will filter user input.. don't worry!
+			$person->attributes = $_POST['Person'];
+
+			if ($person->save()) {
+				
+				$this->redirect('index');
+			}
+		}
+
+		$this->render('new', array('person' => $person));
+	}
 }

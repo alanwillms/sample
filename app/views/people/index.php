@@ -1,5 +1,9 @@
 <h1>People</h1>
 
+<p class="btn-group">
+	<a href="<?php echo $this->createUrl('new'); ?>" class="btn btn-primary">New Person</a>
+</p>
+
 <?php if (count($people)) : ?>
 <table class="table table-striped">
 	<thead>
@@ -11,6 +15,8 @@
 			<th>City</th>
 			<th>Address</th>
 			<th>Email</th>
+			<th>&nbsp;</th>
+			<th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -23,6 +29,8 @@
 			<td><?php echo $person->city; ?></td>
 			<td><?php echo $person->address; ?></td>
 			<td><?php echo $person->email; ?></td>
+			<td></td>
+			<td></td>
 		</tr>
 		<?php endforeach; ?>
 	</tbody>
