@@ -12,6 +12,12 @@ abstract class ActiveRecord
 	protected $_attributes = array();
 
 	/**
+	 * ActiveRecord attributes errors
+	 * @var array
+	 */
+	protected $_errors = array();
+
+	/**
 	 * PDO DB adapter
 	 * @var PDO
 	 */
@@ -93,6 +99,55 @@ abstract class ActiveRecord
 	}
 
 	/**
+	 * Add an error to an attribute
+	 * @param string $attribute
+	 * @param string $error
+	 */
+	public function addError($attribute, $error)
+	{
+		if (!isset($this->_errors[$attribute])) {
+			$this->_errors[$attribute] = array();
+		}
+
+		$this->_errors[$attribute][] = $error;
+	}
+
+	/**
+	 * Return object errors (if it has any)
+	 * @param string $attribute If informed, will only look for errors on this attribute
+	 * @return array
+	 */
+	public function getErrors($attribute = null)
+	{
+		if ($attribute) {
+
+			if (isset($this->_errors[$attribute])) {
+				return $this->_errors[$attribute];
+			}
+			else {
+				return array();
+			}
+		}
+
+		return $this->_errors;
+	}
+
+	/**
+	 * Return if any (or some) attribute contain errors or not
+	 * @param string $attribute If informed, will only look for errors on this attribute
+	 * @return boolean
+	 */
+	public function hasErrors($attribute = null)
+	{
+		if ($attribute) {
+
+			return (isset($this->_errors[$attribute]) && count($this->_errors[$attribute]));
+		}
+
+		return count($this->_errors);
+	}
+
+	/**
 	 * Save ActiveRecord model to database table
 	 */
 	public function save()
@@ -105,29 +160,30 @@ abstract class ActiveRecord
 
 		$pk = $this->getPrimaryKeyName();
 		$table = $this->getDbTableName();
+		$attributes = $this->getAttributesNames();
+
+		unset($attributes[$pk]);
 
 		$query = null;
 
 		if ($this->$pk) {
 
-			$query = 'INSERT INTO ' . $table;
-			$query .= ' (' . implode(', ', $this->getAttributesNames() ) . ') ';
-			$query .= ' VALUES (:' . implode(', :', $this->getAttributesNames() ) . ' ) ';
-		}
-		else {
-
 			$query = 'UPDATE ' . $table . ' SET ';
 
 			$params = array();
 
-			foreach ($this->getAttributesNames() as $attribute) {
+			foreach ($attributes as $attribute) {
 				$params[] = $attribute . ' = :' . $attribute;
 			}
 
 			$query .= implode(', ', $params) . $this->prepareWhere(array($pk => $this->$pk));
 		}
+		else {
 
-		die($query);
+			$query = 'INSERT INTO ' . $table;
+			$query .= ' (' . implode(', ', $attributes ) . ') ';
+			$query .= ' VALUES (:' . implode(', :', $attributes ) . ' ) ';
+		}
 
 		$statement = $this->getDb()->prepare($query);
 
@@ -136,7 +192,9 @@ abstract class ActiveRecord
 		}
 
 		foreach ($this->attributes as $attribute => $value) {
-			$statement->bindValue(':' . $attribute, $value);
+
+			if ($attribute != $pk)
+				$statement->bindValue(':' . $attribute, $value);
 		}
 
 		return $statement->execute();
@@ -368,13 +426,14 @@ abstract class ActiveRecord
 		if (is_array($conditions)) {
 
 			$where = array();
+			$model = get_called_class();
 
 			foreach ($conditions as $attribute => $value) {
 
 				if (!is_numeric($attribute)) {
 
 					if (is_string($value)) {
-						$value = $model::getDb()->quoteString($value);
+						$value = $model::getDb()->quote($value);
 					}
 
 					$value = $attribute . ' = ' . $value;
