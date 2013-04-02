@@ -57,10 +57,21 @@ abstract class ActiveRecord
 	public function __set($name, $value)
 	{
 		if ($this->hasAttribute($name)) {
+
 			$this->_attributes[$name] = $value;
+			
 			return $this;
 		}
-		
+
+		if ($name == 'attributes' && is_array($value)) {
+
+			foreach ($value as $name => $v) {
+				$this->$name = $v;
+			}
+
+			return $this;
+		}
+
 		throw new Exception('Undefined attribute "' . $name . '"');
 	}
 
@@ -162,13 +173,20 @@ abstract class ActiveRecord
 		$statement = $model::getDb()->query($query);
 
 		if (!$statement) {
-			die($query);
 			throw new Exception('Database query error');
 		}
 
-		$statement->setFetchMode(PDO::FETCH_CLASS, $model);
+		$models = array();
 
-		return $statement->fetchAll();
+		while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+
+			$object = new $model();
+			$object->attributes = $row;
+
+			$models[] = $object;
+		}
+
+		return $models;
 	}
 
 	/**
