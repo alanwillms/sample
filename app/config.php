@@ -1,7 +1,7 @@
 <?php
 return array(
 	'url' => array(
-		'defaultController' => 'names',
+		'defaultController' => 'people',
 		'defaultAction' => 'index',
 	),
 	'dataBase' => array(
