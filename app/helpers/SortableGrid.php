@@ -1,8 +1,8 @@
 <?php
 /**
- * Grid helper
+ * Sortable grid view helper
  */
-class GridViewHelper
+class SortableGrid
 {
 	public $className;
 	public $listedAttributes;
@@ -13,11 +13,13 @@ class GridViewHelper
 	 * Outputs formatted HTML
 	 * @return string
 	 */
-	public function render($controller)
+	public function render()
 	{
 		if (count($this->objects) == 0)  {
 			return '<p>No records found.</p>';
 		}
+
+		$controller = Application::getController();
 
 		$html = '
 		<table class="table table-striped">

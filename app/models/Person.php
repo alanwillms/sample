@@ -30,7 +30,16 @@ class Person extends ActiveRecord
 		foreach ($requiredAttributes as $attribute) {
 
 			if (!$this->$attribute) {
-				$this->addError($attribute, $attribute . ' is required');
+				$label = $this->getAttributeLabel($attribute);
+				$this->addError($attribute, $label . ' is required');
+			}
+		}
+
+		// Only validates e-mail if it has been entered
+		if ($this->email) {
+
+			if (false == filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+				$this->addError('email', 'This is not a valid e-mail address');
 			}
 		}
 	}

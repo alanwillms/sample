@@ -309,7 +309,7 @@ abstract class ActiveRecord
 			return $labels[$attribute];
 		}
 
-		return ucwords(str_replace('_', ' ', $attribute));
+		return ucfirst(str_replace('_', ' ', $attribute));
 	}
 
 	/**

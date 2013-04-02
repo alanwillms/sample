@@ -18,6 +18,12 @@ class Application
 	private $_urlManager;
 
 	/**
+	 * Hold current controller instance
+	 * @var Controller
+	 */
+	private static $_controller;
+
+	/**
 	 * Requires application initial config file to be loaded
 	 * @param string $configFilePath
 	 */
@@ -98,7 +104,18 @@ class Application
 			throw new Exception('Action method "' . $actionMethod . '"  not found', 404);
 		}
 
+		self::$_controller = $controller;
+
 		$controller->$actionMethod();
+	}
+
+	/**
+	 * Return current controller instance
+	 * @return Controller
+	 */
+	public static function getController()
+	{
+		return self::$_controller;
 	}
 
 	/**

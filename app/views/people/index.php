@@ -5,7 +5,7 @@
 </p>
 
 <?php
-$grid = new GridViewHelper;
+$grid = new SortableGrid;
 $grid->className = 'Person';
 $grid->listedAttributes = Person::getAttributesNames();
 $grid->actionLinks = array(
@@ -14,4 +14,4 @@ $grid->actionLinks = array(
 );
 $grid->objects = $people;
 
-echo $grid->render($this);
+echo $grid->render();

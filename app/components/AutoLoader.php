@@ -34,6 +34,7 @@ class AutoLoader
 		$pathsByPriority = array(
 			'components',
 			'models',
+			'helpers',
 			'controllers',
 		);
 
