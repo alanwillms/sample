@@ -10,5 +10,6 @@ return array(
 		'database' => getenv('DB_NAME'),
 		'username' => getenv('DB_USER'),
 		'password' => getenv('DB_PASSWORD'),
+		'charset'  => 'utf-8',
 	),
 );

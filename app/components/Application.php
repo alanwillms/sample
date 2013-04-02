@@ -40,7 +40,7 @@ class Application
 	 */
 	public function setupDataBase($config)
 	{
-		$requiredInfo = array('engine', 'database', 'host', 'username', 'password');
+		$requiredInfo = array('engine', 'database', 'host', 'username', 'password', 'charset');
 		$availableInfo = array_keys($config);
 
 		foreach ($requiredInfo as $info) {
@@ -49,7 +49,7 @@ class Application
 			}
 		}
 
-		$dns = $config['engine'] . ':dbname=' . $config['database'] . ";host=" . $config['host']; 
+		$dns = $config['engine'] . ':dbname=' . $config['database'] . ";host=" . $config['host'] . ";charset=" . $config['charset']; 
 		$pdo = new PDO($dns, $config['username'], $config['password']);
 
 		ActiveRecord::setDb($pdo);
