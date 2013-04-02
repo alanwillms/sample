@@ -50,7 +50,7 @@ abstract class ActiveRecord
 		$select = $where = $order = $limit = null;
 
 		if (isset($filtering['order'])) {
-			$order = 'ORDER BY ' . $model::prepareOrder($filtering['order']);
+			$order = ' ORDER BY ' . $model::prepareOrder($filtering['order']);
 		}
 
 		if (!isset($filtering['select'])) {
@@ -82,14 +82,14 @@ abstract class ActiveRecord
 	 */
 	protected static function prepareOrder(array $attributes)
 	{
+		$model = get_called_class();
 		$orderBy = array();
+
 		foreach ($attributes as $attribute => $order) {
 
 			if ($model::hasAttribute($attribute)) {
 
-				$order = strtoupper($order);
-
-				$orderBy .= $attribute . ' ' . ($order == 'ASC') ? 'ASC' : 'DESC';
+				$orderBy[] = ($attribute . ' ' . ((strtoupper($order) == 'ASC') ? 'ASC' : 'DESC'));
 			}
 		}
 

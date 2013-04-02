@@ -28,6 +28,31 @@ abstract class Controller
 	}
 
 	/**
+	 * Create a URL based on a controller/action ID and params
+	 * @param string $request controller/action or action
+	 * @param array $params
+	 * @return string
+	 */
+	protected function createUrl($request, array $params = array())
+	{
+		$request = explode('/', $request);
+
+		if (count($request) == 1) {
+			array_unshift($request, $this->getId());
+		}
+
+		$request = implode('/', $request);
+
+		$url = $this->getBaseUrl() . '?r=' . $request;
+
+		if (count($params)) {
+			$url .= '&' . http_build_query($params);
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Render view within application layout
 	 * @param string $viewFileName
 	 * @param array $viewParams Variables exported to view

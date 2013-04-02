@@ -5,7 +5,7 @@
 	<thead>
 		<tr>
 			<th>#</th>
-			<th>First Name</th>
+			<th><a href="<?php echo $this->createUrl('index', array('Person' => array('first_name' => 'ASC'))); ?>">First Name</a></th>
 			<th>Last name</th>
 			<th>Country</th>
 			<th>City</th>
