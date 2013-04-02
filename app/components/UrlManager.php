@@ -6,6 +6,12 @@
 class UrlManager
 {
 	/**
+	 * Application base URL
+	 * @var string
+	 */
+	private static $_baseUrl;
+
+	/**
 	 * Default controller if not informed
 	 * @var string
 	 */
@@ -50,6 +56,20 @@ class UrlManager
 		}
 
 		return $this->defaultAction;
+	}
+
+	/**
+	 * Get application base URL
+	 * @return string
+	 */
+	public static function getBaseUrl()
+	{
+		if (null === self::$_baseUrl) {
+
+			self::$_baseUrl = rtrim(dirname($_SERVER['PHP_SELF']),'\\/');
+		}
+
+		return self::$_baseUrl;
 	}
 
 	/**
