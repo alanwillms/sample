@@ -72,10 +72,36 @@ class ActiveForm
 	/**
 	 * Close a new field row
 	 */
-	public function closeField()
+	public function closeField($attribute)
 	{
+		if ($this->_object->hasErrors($attribute)) {
+
+			$errors = implode('. ', $this->_object->getErrors($attribute));
+
+			echo '<span class="help-inline">' . $errors . '</span>';
+		}
+
 		echo '</div>
 		</div>';
+	}
+
+	/**
+	 * Render a input
+	 */
+	public function textArea($attribute)
+	{
+		$this->openField($attribute);
+
+		$fieldId = $this->getHtmlId($attribute);
+		$fieldName = $this->getHtmlName($attribute);
+
+		echo '<textarea id="', $fieldId,
+		     '" name="', $fieldName, '">',
+		     htmlspecialchars($this->_object->$attribute),
+		     '</textarea>'
+		;
+
+		$this->closeField($attribute);
 	}
 
 	/**
@@ -86,22 +112,14 @@ class ActiveForm
 		$this->openField($attribute);
 
 		$fieldId = $this->getHtmlId($attribute);
-
-		$className = get_class($this->_object);
+		$fieldName = $this->getHtmlName($attribute);
 
 		echo '<input type="', $type, '" id="', $fieldId,
-		     '" name="', $className, '[', $attribute, ']" value="',
+		     '" name="', $fieldName, '" value="',
 		     htmlspecialchars($this->_object->$attribute), '" />'
 		;
 
-		if ($this->_object->hasErrors($attribute)) {
-
-			$errors = implode('. ', $this->_object->getErrors($attribute));
-
-			echo '<span class="help-inline">' . $errors . '</span>';
-		}
-
-		$this->closeField();
+		$this->closeField($attribute);
 	}
 
 	/**
@@ -140,5 +158,14 @@ class ActiveForm
 	protected function getHtmlId($attribute)
 	{
 		return get_class($this->_object) . '_' . $attribute;
+	}
+
+	/**
+	 * HTML name for an attribute
+	 * @return string
+	 */
+	protected function getHtmlName($attribute)
+	{
+		return get_class($this->_object) . '[' . $attribute . ']';
 	}
 }

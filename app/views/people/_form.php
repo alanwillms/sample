@@ -6,7 +6,7 @@ $form->open();
 $form->textInput('first_name');
 $form->textInput('last_name');
 $form->emailInput('email');
-$form->textInput('address');
+$form->textArea('address');
 $form->textInput('city');
 $form->textInput('country');
 
