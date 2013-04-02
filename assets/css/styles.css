@@ -1,0 +1,19 @@
+body {
+	padding: 20px;
+}
+
+table thead th.sorting-none { 
+	background: url('../img/sorting-none.png') no-repeat center right;
+}
+
+table thead th.sorting-asc {
+	background: url('../img/sorting-asc.png') no-repeat center right;
+}
+
+table thead th.sorting-desc {
+	background: url('../img/sorting-desc.png') no-repeat center right;
+}
+
+table thead th a {
+	display: block;
+}

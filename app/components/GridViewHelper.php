@@ -30,14 +30,26 @@ class GridViewHelper
 
 			$direction = 'asc';
 
+			$label = $className::getAttributeLabel($attribute);
+
+			$htmlClass = 'sorting-none';
+			$htmlTitle = 'Sort by ' . $label;
+
 			if (isset($_GET[$className]) && isset($_GET[$className][$attribute])) {
 
-				$direction = ($_GET[$className][$attribute] == 'asc') ? 'desc' : 'asc';
+				if ($_GET[$className][$attribute] == 'asc') {
+					$direction = 'desc';
+					$htmlClass = 'sorting-desc';
+				}
+				else {
+					$direction = 'asc';
+					$htmlClass = 'sorting-asc';
+				}
 			}
 
 			$sortUrl = $controller->createUrl('index', array($this->className => array($attribute => $direction)));
 
-			$html .= '<th><a href="' . $sortUrl . '">' . $className::getAttributeLabel($attribute) . '</a></th>';
+			$html .= '<th class="' . $htmlClass . '"><a href="' . $sortUrl . '" title="' . $htmlTitle . '">' . $label . '</a></th>';
 		}
 
 		foreach ($this->actionLinks as $action => $label) {
@@ -57,7 +69,7 @@ class GridViewHelper
 
 			foreach ($this->listedAttributes as $attribute) {
 
-				$html .= '<td>' . $object->$attribute . '</td>';
+				$html .= '<td>' . htmlspecialchars($object->$attribute) . '</td>';
 			}
 
 			$pk = $object->getPrimaryKeyName();
