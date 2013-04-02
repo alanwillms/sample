@@ -38,6 +38,33 @@ class Application
 		$urlConfig = ($this->_config && isset($this->_config['url'])) ? $this->_config['url'] : false;
 
 		$this->setupUrlManager($urlConfig);
+
+		$isDevelopmentEnv = (isset($this->_config['environment']) && $this->_config['environment'] == 'development');
+
+		$this->setupEnvironment($isDevelopmentEnv);
+	}
+
+	/**
+	 * Setup isDevelopmentEnv
+	 * @param boolean $isDevelopmentEnv
+	 */
+	public function setupEnvironment($isDevelopmentEnv)
+	{
+		$errorLevels = 0;
+		$enableErrors = 0;
+
+		if ($isDevelopmentEnv) {
+
+			$errorLevels = (E_ALL | E_STRICT);
+			$enableErrors = 1;
+		}
+		else {
+
+			set_exception_handler('ExceptionHandler::handle');
+		}
+
+		error_reporting($errorLevels);
+		ini_set('display_errors', $enableErrors);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 <?php
 return array(
+	'environment' => getenv('ENVIRONMENT'), // development will turn errors on
 	'url' => array(
 		'defaultController' => 'people',
 		'defaultAction' => 'index',
