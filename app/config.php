@@ -1,5 +1,6 @@
 <?php
 return array(
+	// You did not need to use "$_ENV" if you do not want...
 	'environment' => getenv('ENVIRONMENT'), // development will turn errors on
 	'url' => array(
 		'defaultController' => 'people',
