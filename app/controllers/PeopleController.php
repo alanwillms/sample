@@ -23,9 +23,6 @@ class PeopleController extends Controller
 		$this->render('index', array('people' => $people));
 	}
 
-	// TODO CHECK SAFE ATTRIBUTES
-	// TODO FLASH MESSAGES
-
 	/**
 	 * Create person
 	 */
