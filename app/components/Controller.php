@@ -33,7 +33,7 @@ abstract class Controller
 	 * @param array $params
 	 * @return string
 	 */
-	protected function createUrl($request, array $params = array())
+	public function createUrl($request, array $params = array())
 	{
 		$request = explode('/', $request);
 

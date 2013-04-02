@@ -264,6 +264,33 @@ abstract class ActiveRecord
 	}
 
 	/**
+	 * Return attributes readable names
+	 * @return array
+	 */
+	public static function getAttributesLabels()
+	{
+		return array();
+	}
+
+	/**
+	 * Return attributes readable name
+	 * @param string $attribute
+	 * @return string
+	 */
+	public static function getAttributeLabel($attribute)
+	{
+		$model = get_called_class();
+
+		$labels = $model::getAttributesLabels();
+
+		if (isset($labels[$attribute])) {
+			return $labels[$attribute];
+		}
+
+		return ucwords(str_replace('_', ' ', $attribute));
+	}
+
+	/**
 	 * Check if model contains certain attribute
 	 * @param string $attribute
 	 * @return boolean
