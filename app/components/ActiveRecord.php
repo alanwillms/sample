@@ -30,7 +30,7 @@ abstract class ActiveRecord
 	{
 		$this->_attributes = array();
 
-		foreach ($this->getAttributes() as $attribute) {
+		foreach ($this->getAttributesNames() as $attribute) {
 			$this->_attributes[$attribute] = null;
 		}
 	}
@@ -44,6 +44,11 @@ abstract class ActiveRecord
 	{
 		if ($this->hasAttribute($name)) {
 			return $this->_attributes[$name];
+		}
+
+		if ($name == 'attributes') {
+
+			return $this->_attributes;
 		}
 
 		throw new Exception('Undefined attribute "' . $name . '"');
@@ -73,6 +78,68 @@ abstract class ActiveRecord
 		}
 
 		throw new Exception('Undefined attribute "' . $name . '"');
+	}
+
+	/**
+	 * Method overriten for validations.
+	 * <code>
+	 * // Each attribute can have multiple errors
+	 * $this->addError($attribute, 'Error message');
+	 * </code>
+	 */
+	public function validate()
+	{
+
+	}
+
+	/**
+	 * Save ActiveRecord model to database table
+	 */
+	public function save()
+	{
+		$this->validate();
+
+		if ($this->hasErrors()) {
+			return false;
+		}
+
+		$pk = $this->getPrimaryKeyName();
+		$table = $this->getDbTableName();
+
+		$query = null;
+
+		if ($this->$pk) {
+
+			$query = 'INSERT INTO ' . $table;
+			$query .= ' (' . implode(', ', $this->getAttributesNames() ) . ') ';
+			$query .= ' VALUES (:' . implode(', :', $this->getAttributesNames() ) . ' ) ';
+		}
+		else {
+
+			$query = 'UPDATE ' . $table . ' SET ';
+
+			$params = array();
+
+			foreach ($this->getAttributesNames() as $attribute) {
+				$params[] = $attribute . ' = :' . $attribute;
+			}
+
+			$query .= implode(', ', $params) . $this->prepareWhere(array($pk => $this->$pk));
+		}
+
+		die($query);
+
+		$statement = $this->getDb()->prepare($query);
+
+		if (!$statement) {
+			throw new Exception('Query error');
+		}
+
+		foreach ($this->attributes as $attribute => $value) {
+			$statement->bindValue(':' . $attribute, $value);
+		}
+
+		return $statement->execute();
 	}
 
 	/**
@@ -126,7 +193,7 @@ abstract class ActiveRecord
 	 * Return attributes names
 	 * @return array
 	 */
-	public static function getAttributes()
+	public static function getAttributesNames()
 	{
 		$model = get_called_class();
 		$attributes = array();
@@ -146,7 +213,7 @@ abstract class ActiveRecord
 	public static function hasAttribute($attribute)
 	{
 		$model = get_called_class();
-		return in_array($attribute, $model::getAttributes());
+		return in_array($attribute, $model::getAttributesNames());
 	}
 
 	/**
@@ -183,6 +250,10 @@ abstract class ActiveRecord
 
 		if (isset($filtering['limit'])) {
 			$limit = $model::prepareLimit($filtering['limit']);
+		}
+
+		if (isset($filtering['where'])) {
+			$where = $model::prepareWhere($filtering['where']);
 		}
 
 		if (!isset($filtering['select'])) {
@@ -238,7 +309,9 @@ abstract class ActiveRecord
 	public static function findByPk($id)
 	{
 		$model = get_called_class();
-		return $model::find(array($model::getPrimaryKeyName() => intval($id)));
+		$pk = $model::getPrimaryKeyName();
+
+		return $model::find(array('where' => array($pk => intval($id))));
 	}
 
 	/**
@@ -277,6 +350,46 @@ abstract class ActiveRecord
 
 		if ($limit) {
 			return ' LIMIT ' . $limit;
+		}
+
+		return null;
+	}
+
+	
+	/**
+	 * Prepare WHERE clause
+	 * @param mixed $conditions
+	 * @return string
+	 */
+	protected static function prepareWhere($conditions)
+	{
+		$condition = null;
+
+		if (is_array($conditions)) {
+
+			$where = array();
+
+			foreach ($conditions as $attribute => $value) {
+
+				if (!is_numeric($attribute)) {
+
+					if (is_string($value)) {
+						$value = $model::getDb()->quoteString($value);
+					}
+
+					$value = $attribute . ' = ' . $value;
+				}
+				
+				$where[] = $value;
+			}
+
+			if (count($where)) {
+				$condition = implode(' AND ', $where);
+			}
+		}
+
+		if ($condition) {
+			return ' WHERE ' . $condition;
 		}
 
 		return null;
