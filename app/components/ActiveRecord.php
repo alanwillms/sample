@@ -6,6 +6,12 @@
 abstract class ActiveRecord
 {
 	/**
+	 * ActiveRecord attributes values
+	 * @var array
+	 */
+	protected $_attributes = array();
+
+	/**
 	 * PDO DB adapter
 	 * @var PDO
 	 */
@@ -16,6 +22,47 @@ abstract class ActiveRecord
 	 * @var array
 	 */
 	private static $_dbTableInfo = array();
+
+	/**
+	 * Initialize ActiveRecord model
+	 */
+	public function __construct()
+	{
+		$this->_attributes = array();
+
+		foreach ($this->getAttributes() as $attribute) {
+			$this->_attributes[$attribute] = null;
+		}
+	}
+
+	/**
+	 * Magic getter to deal with ActiveRecord attributes
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get($name)
+	{
+		if ($this->hasAttribute($name)) {
+			return $this->_attributes[$name];
+		}
+
+		throw new Exception('Undefined attribute "' . $name . '"');
+	}
+
+	/**
+	 * Magic getter to deal with ActiveRecord attributes
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __set($name, $value)
+	{
+		if ($this->hasAttribute($name)) {
+			$this->_attributes[$name] = $value;
+			return $this;
+		}
+		
+		throw new Exception('Undefined attribute "' . $name . '"');
+	}
 
 	/**
 	 * Set PDO DB adapter
