@@ -1,3 +1,8 @@
+coverage:
+    enabled: true
+    remote: false
+    include:
+        - app/*
 paths:
     tests: tests
     log: tests/_log
