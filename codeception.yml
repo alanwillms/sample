@@ -12,7 +12,7 @@ settings:
 modules:
     config:
         Db:
-            dsn: ''
-            user: ''
-            password: ''
-            dump: tests/_data/dump.sql
+            dsn: <?php echo getenv('DB_ENGINE') . ':dbname=' . getenv('DB_NAME') . ';host=' . getenv('DB_HOST') . ';charset=' . getenv('DB_CHARSET'); ?>
+            user: "<?php echo getenv('DB_USER'); ?>"
+            password: "<?php echo getenv('DB_PASSWORD'); ?>"
+            dump: app/schema.sql
