@@ -7,7 +7,7 @@ Installation
 
 1. Configure env variables:
 
-`
+```apache
 SetEnv DB_ENGINE mysql
 SetEnv DB_HOST localhost
 SetEnv DB_NAME sample
@@ -16,7 +16,7 @@ SetEnv DB_PASSWORD ""
 SetEnv DB_CHARSET "utf-8"
 SetEnv ENVIRONMENT "development" # /test/production
 SetEnv TEST_URL "http://test/sample/"
-`
+```
 
 2. Import database schema `app/schema.sql`.
 
@@ -46,7 +46,8 @@ Add following line to `/etc/hosts/` file:
 
 Add a `.htaccess` file or configure your Apache with:
 
-`SetEnv DB_ENGINE mysql
+```apache
+SetEnv DB_ENGINE mysql
 SetEnv DB_HOST localhost
 SetEnv DB_USER root
 SetEnv DB_PASSWORD ""
@@ -58,3 +59,4 @@ SetEnvIf Host test DB_NAME=sample_test
 # SetEnvIfNoCase sometimes doesn't work, so...
 SetEnvIf Host localhost ENVIRONMENT=development
 SetEnvIf Host localhost DB_NAME=sample
+```
