@@ -144,7 +144,7 @@ abstract class ActiveRecord
 			return (isset($this->_errors[$attribute]) && count($this->_errors[$attribute]));
 		}
 
-		return count($this->_errors);
+		return (count($this->_errors) > 0);
 	}
 
 	/**
