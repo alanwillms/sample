@@ -1,3 +1,4 @@
 vendor/*
-avaaz.sublime-project
-avaaz.sublime-workspace
+tests/_log/*
+sample.sublime-project
+sample.sublime-workspace
