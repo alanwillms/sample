@@ -67,23 +67,24 @@ abstract class ActiveRecord
 	 */
 	public function __set($name, $value)
 	{
-		if ($this->hasAttribute($name)) {
-
-			$this->_attributes[$name] = $value;
-
-			return $this;
-		}
+		$attributes = [];
 
 		if ($name == 'attributes' && is_array($value)) {
-
-			foreach ($value as $name => $v) {
-				$this->$name = $v;
-			}
-
-			return $this;
+			$attributes = $value;
+		} else {
+			$attributes[$name] = $value;
 		}
 
-		throw new Exception('Undefined attribute "' . $name . '"');
+		foreach ($attributes as $name => $value) {
+
+			if (false == $this->hasAttribute($name)) {
+				throw new Exception('Undefined attribute "' . $name . '"');
+			}
+
+			$this->_attributes[$name] = $value;
+		}
+
+		return $this;
 	}
 
 	/**
@@ -258,12 +259,16 @@ abstract class ActiveRecord
 		$model = get_called_class();
 
 		if (!isset(self::$_dbTableInfo[$model])) {
+            
+			$resultSet = $model::getDb()->query('SELECT * FROM ' . $model::getDbTableName() . ' LIMIT 0');
+			$columns = [];
 
-			$statement = $model::getDb()->prepare('DESCRIBE ' . $model::getDbTableName());
+			for ($i = 0; $i < $resultSet->columnCount(); $i++) {
+			    $column = $resultSet->getColumnMeta($i);
+			    $columns[] = $column['name'];
+			}
 
-			$statement->execute();
-
-			self::$_dbTableInfo[$model] = $statement->fetchAll(PDO::FETCH_ASSOC);
+			self::$_dbTableInfo[$model] = $columns;
 		}
 
 		return self::$_dbTableInfo[$model];
@@ -279,7 +284,7 @@ abstract class ActiveRecord
 		$attributes = array();
 
 		foreach ($model::getDbTableInfo() as $column) {
-			$attributes[$column['Field']] = $column['Field'];
+			$attributes[$column] = $column;
 		}
 
 		return $attributes;
@@ -329,15 +334,7 @@ abstract class ActiveRecord
 	 */
 	public static function getPrimaryKeyName()
 	{
-		$model = get_called_class();
-
-		foreach ($model::getDbTableInfo() as $column) {
-
-			if ($column['Key'] == 'PRI')
-				return $column['Field'];
-		}
-
-		throw new Exception('Unknown primary key column name');
+		return 'id';
 	}
 
 	/**

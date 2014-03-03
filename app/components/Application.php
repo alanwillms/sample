@@ -39,7 +39,10 @@ class Application
 
 		$this->setupUrlManager($urlConfig);
 
-		$isDevelopmentEnv = (isset($this->_config['environment']) && $this->_config['environment'] == 'development');
+		$isDevelopmentEnv = (
+            isset($this->_config['environment'])
+            && in_array($this->_config['environment'], ['development', 'test'])
+        );
 
 		$this->setupEnvironment($isDevelopmentEnv);
 	}
@@ -82,8 +85,8 @@ class Application
 			}
 		}
 
-		$dns = $config['engine'] . ':dbname=' . $config['database'] . ";host=" . $config['host'] . ";charset=" . $config['charset']; 
-		$pdo = new PDO($dns, $config['username'], $config['password']);
+		$dsn = $config['engine'] . ':dbname=' . $config['database'] . ";host=" . $config['host']; 
+		$pdo = new PDO($dsn, $config['username'], $config['password']);
 
 		ActiveRecord::setDb($pdo);
 	}

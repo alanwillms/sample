@@ -1,4 +1,9 @@
-vendor/*
-tests/_log/*
-sample.sublime-project
-sample.sublime-workspace
+/vendor/*
+/tests/_log/*
+/tests/acceptance/WebGuy.php
+/tests/functional/TestGuy.php
+/tests/unit/CodeGuy.php
+/sample.sublime-project
+/sample.sublime-workspace
+/codeception.yml
+.DS_Store

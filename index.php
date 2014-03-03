@@ -2,6 +2,6 @@
 
 require 'app/components/AutoLoader.php';
 
-$application = new Application('app/config.php');
+$application = new Application('app/config/web.php');
 
 $application->run();
